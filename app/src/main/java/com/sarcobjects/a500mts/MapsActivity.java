@@ -234,37 +234,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-static class PolyCircle {
-        Polygon polygon;
-        Circle circle;
 
-    public Polygon getPolygon() {
-        return polygon;
-    }
-
-    public void setPolygon(Polygon polygon) {
-        this.polygon = polygon;
-    }
-
-    public Circle getCircle() {
-        return circle;
-    }
-
-    public void setCircle(Circle circle) {
-        this.circle = circle;
-    }
-
-    public void removeCircle() {
-        if (circle != null) {
-            circle.remove();
-        }
-    }
-
-    public void removePolygon() {
-        if (polygon != null) {
-            polygon.remove();
-        }
-    }
-}
 
 }

@@ -1,0 +1,26 @@
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=B3:C9:74:50:63:23:D2:82:39:80:E4:77:3C:D0:20:2F:2F:53:94:A7%3Bcom.sarcobjects.a500mts
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    com.sarcobjects.a500mts
+
+    SHA-1 certificate fingerprint:
+    B3:C9:74:50:63:23:D2:82:39:80:E4:77:3C:D0:20:2F:2F:53:94:A7
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyC6FjODLjcmW--MHjP4bE8UiI59l_FjMuY</string>
+    <string name="bing_maps_key" templateMergeStrategy="preserve" translatable="false">ArgsggbF5gTrtoKqnQlE4TNy-aESLqhiVhbOIGDpfI8N3fPPD1e-F5REQqAhyuoa</string>
+    <string name="here_maps_key" templateMergeStrategy="preserve" translatable="false">pH_tHAZNvmyxcvanHSGxYhwJT_zyuAUgLQxU0VrlQCw</string>
+</resources>

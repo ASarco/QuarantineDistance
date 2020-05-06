@@ -3,6 +3,9 @@ package com.sarcobjects.a500mts;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
@@ -14,6 +17,7 @@ import static java.lang.String.format;
 public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
     private static final String TAG = GeofenceBroadcastReceiver.class.getSimpleName();
+    public static final long[] TIMINGS = {500, 1000, 500};
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -31,11 +35,21 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
             // Get the 1st geofence that were triggered, since we only have 1 geofence.
             Geofence geofence = geofencingEvent.getTriggeringGeofences().get(0);
             //vibrate the mobile
-
+            vibrate(context);
             Log.i(TAG, format("Geofence event %s triggered: %s", geofenceTransition, geofence.getRequestId()));
         } else {
             // Log the error.
             //Log.e(TAG, getString(R.string.geofence_transition_invalid_type, geofenceTransition));
+        }
+    }
+
+    private void vibrate(Context context) {
+        if (Build.VERSION.SDK_INT >= 26) {
+            ((Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(VibrationEffect.createWaveform(TIMINGS, 1));
+        } else {
+            ((Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(500);
+            ((Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(1000);
+            ((Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(500);
         }
     }
 }

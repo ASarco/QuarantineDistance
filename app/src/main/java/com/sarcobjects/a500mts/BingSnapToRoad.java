@@ -56,7 +56,6 @@ public class BingSnapToRoad extends SnapToRoad {
                                         JSONObject point = points.getJSONObject(k);
                                         JSONObject coordinate = point.getJSONObject("coordinate");
                                         latLngs.add(new LatLng(coordinate.getDouble("latitude"), coordinate.getDouble("longitude")));
-                                        Log.i(TAG, "Received point: " + coordinate);
                                     }
                                 }
                             }

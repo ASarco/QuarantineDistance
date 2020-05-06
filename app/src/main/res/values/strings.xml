@@ -5,7 +5,7 @@
 
     <string name="error_http_call" translatable="true">Error durante HTTP (Roads API)</string>
     <string name="error_json_parse" translatable="true">Error leyendo datos recibidos desde Google (Roads API)</string>
-    <string name="error_location_unavailable" translatable="true">La ubicación no está disponible</string>
+    <string name="error_location_unavailable" translatable="true">La ubicación no está disponible. Mueva el puntero a la ubicación deseada.</string>
     <string name="error_security_unavailable" translatable="true">Acceso a la ubicación no disponible</string>
 
     <integer name="number_of_slices" translatable="true">4</integer>

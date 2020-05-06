@@ -56,7 +56,6 @@ public class GoogleSnapToRoad extends SnapToRoad {
                                 JSONObject point = snapped.getJSONObject(i);
                                 JSONObject location = point.getJSONObject("location");
                                 latLngs.add(new LatLng(location.getDouble("latitude"), location.getDouble("longitude")));
-                                Log.i(TAG, "Received point: " + location);
                             }
                         } catch (JSONException e) {
                             handleError(callback, e.getMessage(), R.string.error_json_parse);

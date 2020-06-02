@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -45,6 +46,8 @@ import com.sarcobjects.a500mts.android.MapApplication;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import static android.os.Build.VERSION_CODES.Q;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -113,38 +116,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         Log.i(TAG, "updateLocationUI start");
         try {
-            if (mLocationPermissionGranted) {
-                mMap.setMyLocationEnabled(true);
-                mMap.getUiSettings().setMyLocationButtonEnabled(true);
-                // Get the current location of the device and set the position of the map.
-                getDeviceLocation();
-            } else {
+            if (!mLocationPermissionGranted) {
                 mMap.setMyLocationEnabled(false);
                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
                 getLocationPermission();
             }
-            if (!mLocationBackgroundPermissionGranted) {
-                //getLocationBackgroundPermission();
-            }
+/*            if (!mLocationBackgroundPermissionGranted) {
+                if (Build.VERSION.SDK_INT >= Q) {
+                    getLocationBackgroundPermission();
+                } else {
+                    mLocationBackgroundPermissionGranted = true;
+                }
+            }*/
+            getDeviceLocation();
         } catch (SecurityException e) {
             Log.e(TAG, "Security Exception: ", e);
             Snackbar.make(findViewById(R.id.map),
                     R.string.error_security_unavailable, Snackbar.LENGTH_LONG).show();
-        }
-    }
-
-    private void getLocationPermission() {
-        /*
-         * Request location permission, so that we can get the location of the
-         * device. The result of the permission request is handled by a callback,
-         * onRequestPermissionsResult.
-         */
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            /*&& ActivityCompat.checkSelfPermission(this, permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED*/) {
-            mLocationPermissionGranted = true;
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{permission.ACCESS_FINE_LOCATION/*, permission.ACCESS_BACKGROUND_LOCATION*/},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
 
@@ -161,17 +149,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mLocationBackgroundPermissionGranted = true;
                 }
             }
-            case PERMISSIONS_REQUEST_ACCESS_BACKGROUND_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mLocationPermissionGranted = true;
-                    mLocationBackgroundPermissionGranted = true;
-                }
-            }
         }
         updateLocationUI();
     }
 
-    //@RequiresApi(api = Build.VERSION_CODES.Q)
+    private void getLocationPermission() {
+        /*
+         * Request location permission, so that we can get the location of the
+         * device. The result of the permission request is handled by a callback,
+         * onRequestPermissionsResult.
+         */
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            /*&& ActivityCompat.checkSelfPermission(this, permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED*/) {
+            mLocationPermissionGranted = true;
+            mLocationBackgroundPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{permission.ACCESS_FINE_LOCATION, permission.ACCESS_BACKGROUND_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+    }
+
+    @RequiresApi(api = Q)
     private void getLocationBackgroundPermission() {
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(), permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLocationBackgroundPermissionGranted = true;
@@ -190,6 +188,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.i(TAG, "getDeviceLocation start");
 
             if (mLocationPermissionGranted) {
+                mMap.setMyLocationEnabled(true);
+                mMap.getUiSettings().setMyLocationButtonEnabled(true);
                 LocationRequest locationRequest = LocationRequest.create();
                 locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
                 locationRequest.setInterval(20000);

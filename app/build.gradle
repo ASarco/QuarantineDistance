@@ -15,9 +15,17 @@ android {
     }
 
     buildTypes {
+        debug {
+            resValue 'String', "google_maps_key", GOOGLE_MAPS_KEY
+            resValue 'String', "bing_maps_key", BING_MAPS_KEY
+            resValue 'String', "mapbox_maps_key", MAPBOX_MAPS_KEY
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue 'String', "google_maps_key", GOOGLE_MAPS_KEY
+            resValue 'String', "bing_maps_key", BING_MAPS_KEY
+            resValue 'String', "mapbox_maps_key", MAPBOX_MAPS_KEY
         }
     }
     compileOptions {

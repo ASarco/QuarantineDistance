@@ -58,18 +58,6 @@ android {
         }
     }
 
-    task copyApkFiles(type: Copy){
-        from 'build/outputs/apk/release'
-        into '../apk'
-        include mFileName
-    }
-
-    afterEvaluate {
-        assembleRelease.doLast {
-            tasks.copyApkFiles.execute()
-        }
-    }
-
     buildTypes {
         debug {
             resValue 'string', "google_maps_key", GOOGLE_MAPS_KEY

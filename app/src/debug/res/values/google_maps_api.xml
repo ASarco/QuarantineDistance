@@ -20,7 +20,7 @@
     Once you have your key (it starts with "AIza"), replace the "google_maps_key"
     string in this file.
     -->
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">{GOOGLE_MAPS_KEY}</string>
-    <string name="bing_maps_key" templateMergeStrategy="preserve" translatable="false">{BING_MAPS_KEY}</string>
-    <string name="mapbox_maps_key" templateMergeStrategy="preserve" translatable="false">{MAPBOX_MAPS_KEY}</string>
+<!--    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">${GOOGLE_MAPS_KEY}</string>
+    <string name="bing_maps_key" templateMergeStrategy="preserve" translatable="false">${BING_MAPS_KEY}</string>
+    <string name="mapbox_maps_key" templateMergeStrategy="preserve" translatable="false">${MAPBOX_MAPS_KEY}</string>-->
 </resources>

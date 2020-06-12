@@ -10,9 +10,8 @@ import com.google.android.gms.maps.model.LatLng
 import org.json.JSONException
 import java.util.*
 import java.util.stream.Collectors
-import javax.inject.Inject
 
-class GoogleSnapToRoad(@set:Inject var context: Context? = null) : SnapToRoad() {
+class GoogleSnapToRoad(var context: Context? = null) : SnapToRoad() {
 
     init {
         angles = findAngles(12)

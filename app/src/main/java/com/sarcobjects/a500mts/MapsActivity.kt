@@ -5,13 +5,12 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
@@ -50,8 +49,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        val mapFragment = supportFragmentManager
-                .findFragmentById(R.id.map) as SupportMapFragment
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         //TODO make singleton
@@ -127,19 +125,10 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                 mLocationPermissionGranted = true
                 mLocationBackgroundPermissionGranted = true
             } else {
-                ActivityCompat.requestPermissions(this, arrayOf(permission.ACCESS_FINE_LOCATION, permission.ACCESS_BACKGROUND_LOCATION),
-                        PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
-            }
-        }
-
-    @get:RequiresApi(api = VERSION_CODES.Q)
-    private val locationBackgroundPermission: Unit
-        get() {
-            if (ContextCompat.checkSelfPermission(this.applicationContext, permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mLocationBackgroundPermissionGranted = true
-            } else {
-                ActivityCompat.requestPermissions(this, arrayOf(permission.ACCESS_BACKGROUND_LOCATION),
-                        PERMISSIONS_REQUEST_ACCESS_BACKGROUND_LOCATION)
+                if (Build.VERSION.SDK_INT >= VERSION_CODES.Q) {
+                    ActivityCompat.requestPermissions(this, arrayOf(permission.ACCESS_FINE_LOCATION, permission.ACCESS_BACKGROUND_LOCATION),
+                            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
+                }
             }
         }
 
@@ -207,18 +196,20 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         }
         geofencingClient.addGeofences(getGeofenceRequest(latLng, outRadius), getGeofencePendingIntent())
                 .addOnSuccessListener(this) { Log.i(TAG, "Geofence Activated!") }
-                .addOnFailureListener(this) { e -> Log.e(TAG, "Geofence Failed to activate due to " + e.message, e) }
+                .addOnFailureListener(this) { e ->
+                    Log.e(TAG, "Geofence Failed to activate due to " + e.message, e)
+                    Snackbar.make(findViewById(R.id.map), R.string.error_no_geofence, Snackbar.LENGTH_LONG).show()
+                }
     }
 
-    private fun getGeofencePendingIntent(): PendingIntent? {
+    private fun getGeofencePendingIntent(): PendingIntent?  {
 
         geofencePendingIntent?.let { return it }
 
         val intent = Intent(this, GeofenceBroadcastReceiver::class.java)
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
-        geofencePendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        return geofencePendingIntent
+        return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     private fun getGeofenceRequest(latLng: LatLng, outRadius: Int): GeofencingRequest {
@@ -226,7 +217,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                 .setRequestId(QUARANTINE)
                 .setCircularRegion(latLng.latitude, latLng.longitude, outRadius.toFloat())
                 .setExpirationDuration(3600000)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT or Geofence.GEOFENCE_TRANSITION_ENTER)
                 .setLoiteringDelay(500)
                 .build()
         return GeofencingRequest.Builder().addGeofence(geofence).build()
@@ -237,7 +228,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         polyAndCircle.removePolygon()
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM.toFloat()))
         val circle = map.addCircle(CircleOptions().center(latLng).radius(outRadius.toDouble())
-                .visible(true).fillColor(Color.TRANSPARENT).strokeWidth(1f))
+                .visible(true).fillColor(Color.TRANSPARENT).strokeWidth(2f).strokeColor(Color.RED))
         polyAndCircle.circle = circle
         enableGeofencing(latLng, outRadius)
         val latLngs: List<LatLng?> = snapToRoad.calculatePaths(latLng, outRadius.toDouble())
@@ -245,7 +236,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
             override fun onSuccessResponse(results: List<LatLng?>?) {
                 val polygon = map.addPolygon(PolygonOptions()
                         .addAll(results)
-                        .fillColor(Color.argb(64, 0, 255, 0)).strokeWidth(1f)
+                        .fillColor(Color.argb(64, 0, 255, 0)).strokeWidth(3f)
                         .geodesic(false)
                 )
                 polyAndCircle.polygon = polygon
@@ -262,7 +253,6 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         private val TAG = MapsActivity::class.java.simpleName
         private const val DEFAULT_ZOOM = 15
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
-        private const val PERMISSIONS_REQUEST_ACCESS_BACKGROUND_LOCATION = 2
         const val QUARANTINE = "quarantine"
     }
 }

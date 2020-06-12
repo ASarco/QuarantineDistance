@@ -5,9 +5,10 @@
     <string name="out_of_geofence" translatable="true">Saliste del perímetro!</string>
 
     <string name="error_http_call" translatable="true">Error durante HTTP (Roads API)</string>
-    <string name="error_json_parse" translatable="true">Error leyendo datos recibidos desde Google (Roads API)</string>
+    <string name="error_json_parse" translatable="true">Error leyendo datos recibidos (Roads API)</string>
     <string name="error_location_unavailable" translatable="true">La ubicación no está disponible. Mueva el puntero a la ubicación deseada.</string>
     <string name="error_security_unavailable" translatable="true">Acceso a la ubicación no disponible</string>
+    <string name="error_no_geofence" translatable="true">No se pudo habilitar el Geofence, no se le avisará al salir del perímetro.</string>
 
     <integer name="number_of_slices" translatable="false">4</integer>
     <integer name="out_radius" translatable="false">500</integer>

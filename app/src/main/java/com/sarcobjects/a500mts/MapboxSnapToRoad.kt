@@ -11,13 +11,16 @@ import org.json.JSONException
 import java.util.*
 import java.util.stream.Collectors
 
-class BingSnapToRoad(context: Context) : SnapToRoad() {
+class MapboxSnapToRoad(context: Context) : SnapToRoad() {
     private val context: Context
     override fun snapToRoad(coords: List<LatLng?>?, requestQueue: RequestQueue?, callback: VolleyCallback<List<LatLng?>?>?) {
-        val key = context.getString(R.string.bing_maps_key)
-        val request = JsonObjectRequest(Request.Method.GET, String.format(SNAP_URL, key, formatPaths(coords)), null,
+        val key = context.resources.getString(R.string.mapbox_maps_key)
+
+        val url = String.format(SNAP_URL, formatPaths(coords), key, radiuses(coords!!.size), timestamps(coords.size), waypoints(coords.size))
+        val request = JsonObjectRequest(Request.Method.GET, url, null,
                 Response.Listener { response ->
-                    Log.i(TAG, response.toString())
+                    Log.i(TAG, "Response -> $response")
+                    Log.i(TAG, "Request -> $url")
                     val latLngs: MutableList<LatLng?> = ArrayList()
                     try {
                         val snapped = response.getJSONArray("resourceSets")
@@ -41,20 +44,33 @@ class BingSnapToRoad(context: Context) : SnapToRoad() {
                 },
                 Response.ErrorListener { error ->
                     Log.e(TAG, "HTTP call didn't work: $error")
-                    handleError(callback!!, "HTTP call didn't work: $error", R.string.error_http_call)
+                    handleError(callback!!, "HTTP call didn't work: ${error.message}", R.string.error_http_call)
                 })
         requestQueue!!.add(request)
     }
 
-    private fun formatPaths(latLngs: List<LatLng?>?): String {
+    fun formatPaths(latLngs: List<LatLng?>?): String {
+
         return latLngs!!.stream()
-                .map { l: LatLng? -> l!!.latitude.toString() + "," + l.longitude }
+                    .map { l: LatLng? -> l!!.latitude.toString() + "," + l.longitude }
                 .collect(Collectors.joining(";"))
     }
 
+    fun radiuses(number: Int): String {
+        return Array<String>(number) { "50"}.joinToString(separator=";")
+    }
+
+    fun timestamps(number: Int): String {
+        return Array<String>(number) {i ->  (i * 5).toString()}.joinToString(separator =";" )
+    }
+
+    fun waypoints(number: Int): String {
+        return Array<String>(number) {i ->  i.toString()}.joinToString(separator =";" )
+    }
+
     companion object {
-        private val TAG = BingSnapToRoad::class.java.simpleName
-        private const val SNAP_URL = "https://dev.virtualearth.net/REST/v1/Routes/SnapToRoad?interpolate=true&includeSpeedLimit=false&includeTruckSpeedLimit=false&travelMode=walking&key=%s&points=%s"
+        private val TAG = MapboxSnapToRoad::class.java.simpleName
+        private const val SNAP_URL = "https://api.mapbox.com/matching/v5/mapbox/walking/%s?access_token=%s&radiuses=%s&timestamps=%s&waypoints=%s&steps=false&tidy=true&geometries=polyline&overview=false";
     }
 
     init {

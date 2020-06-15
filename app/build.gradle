@@ -12,7 +12,7 @@ android {
     Properties versionProps = new Properties()
 
     def runTasks = gradle.startParameter.taskNames
-    if ('assembleRelease' in runTasks) {
+    if ('bundleRelease' in runTasks) {
         value = 1
     }
 

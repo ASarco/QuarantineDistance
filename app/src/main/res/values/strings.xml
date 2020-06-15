@@ -3,12 +3,27 @@
     <string name="title_activity_maps">500mts</string>
     <string name="quarantine_place" translatable="true">Lugar de la cuarentena</string>
     <string name="out_of_geofence" translatable="true">Saliste del perímetro!</string>
+    <string name="into_geofence" translatable="true">Dentro del perímetro!</string>
 
     <string name="error_http_call" translatable="true">Error durante HTTP (Roads API)</string>
     <string name="error_json_parse" translatable="true">Error leyendo datos recibidos (Roads API)</string>
     <string name="error_location_unavailable" translatable="true">La ubicación no está disponible. Mueva el puntero a la ubicación deseada.</string>
     <string name="error_security_unavailable" translatable="true">Acceso a la ubicación no disponible</string>
     <string name="error_no_geofence" translatable="true">No se pudo habilitar el Geofence, no se le avisará al salir del perímetro.</string>
+
+    <string name="gps_not_found_title">Ubicación no habilitada</string>
+    <string name="gps_not_found_message">Desea habilitar los servicios de ubicación? También debe habilitar la Búsqueda de Wi-Fi en la siguiente pantalla!</string>
+
+    <string name="yes" translatable="true">Sí</string>
+    <string name="no" translatable="true">No</string>
+    <string name="invitacion_cafecito">Ayudame con un café!</string>
+    <string name="cafecito_description">Si te gustó y/o sirvió esta aplicación, invitame uno o más cafecitos!</string>
+    <string name="goto_cafecito">Ir a cafecito.app</string>
+    <string name="cafecito_url">https://cafecito.app/asarco</string>
+    <string name="maybe_later">Por ahora no.</string>
+    <string name="error_no_browser">No hay browser instalado en tu teléfono</string>
+
+    <integer name="show_cafecito_at">30000</integer>
 
     <integer name="number_of_slices" translatable="false">4</integer>
     <integer name="out_radius" translatable="false">500</integer>

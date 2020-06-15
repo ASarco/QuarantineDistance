@@ -1,16 +1,23 @@
 package com.sarcobjects.a500mts
 
 import android.Manifest.permission
+import android.app.AlarmManager
+import android.app.AlertDialog
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.LocationManager
 import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.os.Looper
+import android.os.SystemClock
+import android.provider.Settings
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import androidx.core.location.LocationManagerCompat
 import androidx.fragment.app.FragmentActivity
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
@@ -24,6 +31,7 @@ import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.sarcobjects.a500mts.android.MapApplication
 import javax.inject.Inject
+
 
 class MapsActivity : FragmentActivity(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
@@ -47,7 +55,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         // Make Dagger instantiate @Inject fields in MapActivity
         MapApplication.applicationComponent!!.inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_maps)
+        setContentView(R.layout.layout_500mts)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -58,6 +66,18 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         geofencingClient = LocationServices.getGeofencingClient(this)
+
+        setAlarmCafecito()
+        checkLocationServices()
+    }
+
+    private fun setAlarmCafecito() {
+        val intent = Intent(this@MapsActivity, AlarmBroadcastReceiver::class.java)
+        val sender = PendingIntent.getBroadcast(this@MapsActivity, 666, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val am: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        am.set(AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime() + resources.getInteger(R.integer.show_cafecito_at).toLong(), sender)
+        Log.i(TAG, "Alarm set for ${resources.getInteger(R.integer.show_cafecito_at)}ms from now")
     }
 
     /**
@@ -247,6 +267,21 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                         stringKey, Snackbar.LENGTH_LONG).show()
             }
         })
+    }
+
+    private fun checkLocationServices() {
+        val lm = getSystemService(LOCATION_SERVICE) as LocationManager
+        val isLocationEnabled = LocationManagerCompat.isLocationEnabled(lm);
+        if (!isLocationEnabled) {
+            AlertDialog.Builder(this)
+                    .setTitle(R.string.gps_not_found_title) // GPS not found
+                    .setMessage(R.string.gps_not_found_message) // Want to enable?
+                    .setPositiveButton(R.string.yes) {
+                        _, _ -> this.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                    }
+                    .setNegativeButton(R.string.no, null)
+                    .show()
+        }
     }
 
     companion object {

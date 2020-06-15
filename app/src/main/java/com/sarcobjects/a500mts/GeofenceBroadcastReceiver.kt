@@ -12,6 +12,8 @@ import androidx.annotation.RequiresApi
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
+import com.sarcobjects.a500mts.R.string.into_geofence
+import com.sarcobjects.a500mts.R.string.out_of_geofence
 
 
 class GeofenceBroadcastReceiver : BroadcastReceiver() {
@@ -26,9 +28,8 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
         // Get the 1st geofence that were triggered, since we only have 1 geofence.
         val geofence = geofencingEvent.triggeringGeofences[0]
-        val transitionType = geofencingEvent.geofenceTransition
         // Test that the reported transition was of interest.
-        when (transitionType) {
+        when (val transitionType = geofencingEvent.geofenceTransition) {
             Geofence.GEOFENCE_TRANSITION_EXIT -> {
                 //vibrate the mobile
                 val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
@@ -37,11 +38,11 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                 } else {
                     vibrate(vibrator)
                 }
-                Toast.makeText(context, context.getString(R.string.out_of_geofence), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(out_of_geofence), Toast.LENGTH_LONG).show()
                 Log.i(TAG, "Geofence EXIT event $transitionType triggered: ${geofence.requestId}")
             }
             Geofence.GEOFENCE_TRANSITION_ENTER -> {
-                Toast.makeText(context, context.getString(R.string.out_of_geofence), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(into_geofence), Toast.LENGTH_LONG).show()
                 Log.i(TAG, "Geofence ENTER event $transitionType triggered: ${geofence.requestId}")
             }
             else -> {
